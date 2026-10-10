@@ -1,0 +1,60 @@
+name: Preprocessing Dataset Harga Emas dan Swiss Franc
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "dataset_harga_emas_dan_swiss_franc_raw/*.csv"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  preprocessing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run preprocessing script
+        run: python preprocessing/automate_Mika-Valentino.py
+
+      - name: Verify preprocessing output
+        run: |
+          python -c "
+          import pandas as pd
+          expected = ['Date','return_gold','return_gold_lag_1','return_gold_lag_2','return_gold_lag_3','return_chf_lag_1','return_chf_lag_2','return_chf_lag_3']
+          df = pd.read_csv('preprocessing/dataset_harga_emas_dan_swiss_franc_preprocessing.csv')
+          assert len(df) > 0, 'Dataset hasil preprocessing kosong'
+          assert list(df.columns) == expected, f'Skema kolom salah: {list(df.columns)}'
+          assert df.isna().sum().sum() == 0, 'Masih terdapat missing values'
+          assert all(pd.api.types.is_numeric_dtype(df[c]) for c in expected[1:]), 'Ada kolom non-numerik'
+          assert df['Date'].notna().all(), 'Kolom Date memiliki nilai kosong'
+          print('OK: dataset final', df.shape, 'dengan skema yang benar')
+          "
+
+      - name: Commit and push updated dataset
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add preprocessing/dataset_harga_emas_dan_swiss_franc_preprocessing.csv
+          if git diff --staged --quiet; then
+            echo "Tidak ada perubahan pada dataset hasil preprocessing. Tidak ada commit."
+          else
+            git commit -m "chore: update dataset hasil preprocessing"
+            git push
+          fi
