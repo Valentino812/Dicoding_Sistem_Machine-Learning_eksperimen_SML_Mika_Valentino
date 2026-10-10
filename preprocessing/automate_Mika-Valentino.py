@@ -32,7 +32,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 RAW_DIR_NAME = "dataset_harga_emas_dan_swiss_franc_raw"
 GOLD_FILE_NAME = "XAU_USD Historical Data.csv"
 CHF_FILE_NAME = "CHF_USD Historical Data.csv"
-OUTPUT_FILE_NAME = "dataset_harga_emas_dan_swiss_franc_preprocessing.csv"
+OUTPUT_FILE_NAME = "harga_emas_dan_swiss_franc_preprocessing.csv"
 
 START_DATE = "2010-01-01"
 END_DATE = "2025-12-31"
