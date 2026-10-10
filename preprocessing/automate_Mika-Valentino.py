@@ -27,12 +27,12 @@ import pandas as pd
 # --------------------------------------------------------------------------- #
 # Konstanta konfigurasi
 # --------------------------------------------------------------------------- #
-REPO_ROOT = Path(__file__).resolve().parent.parent
+SCRIPT_DIR = Path(__file__).resolve().parent
 
-RAW_DIR_NAME = "dataset_harga_emas_dan_swiss_franc_raw"
-GOLD_FILE_NAME = "XAU_USD Historical Data.csv"
-CHF_FILE_NAME = "CHF_USD Historical Data.csv"
-OUTPUT_FILE_NAME = "harga_emas_dan_swiss_franc_preprocessing.csv"
+RAW_DIR = SCRIPT_DIR.parent / "dataset_harga_emas_dan_swiss_franc_raw"
+GOLD_PATH = RAW_DIR / "XAU_USD Historical Data.csv"
+CHF_PATH = RAW_DIR / "CHF_USD Historical Data.csv"
+OUTPUT_PATH = SCRIPT_DIR / "harga_emas_dan_swiss_franc_preprocessing.csv"
 
 START_DATE = "2010-01-01"
 END_DATE = "2025-12-31"
@@ -53,14 +53,6 @@ FINAL_COLUMNS = [
 # --------------------------------------------------------------------------- #
 # Fungsi bantu
 # --------------------------------------------------------------------------- #
-def default_paths():
-    raw_dir = REPO_ROOT / RAW_DIR_NAME
-    gold_path = raw_dir / GOLD_FILE_NAME
-    chf_path = raw_dir / CHF_FILE_NAME
-    output_path = REPO_ROOT / "preprocessing" / OUTPUT_FILE_NAME
-    return gold_path, chf_path, output_path
-
-
 def load_raw_dataset(path, price_column_name):
     path = Path(path)
     if not path.exists():
@@ -146,11 +138,10 @@ def _prepare_single(df, price_column_name, label):
 # --------------------------------------------------------------------------- #
 # Preprocessing
 # --------------------------------------------------------------------------- #
-def preprocess_data(gold_path=None, chf_path=None, output_path=None):
-    default_gold, default_chf, default_output = default_paths()
-    gold_path = Path(gold_path) if gold_path is not None else default_gold
-    chf_path = Path(chf_path) if chf_path is not None else default_chf
-    output_path = Path(output_path) if output_path is not None else default_output
+def preprocess_data(gold_path=GOLD_PATH, chf_path=CHF_PATH, output_path=OUTPUT_PATH):
+    gold_path = Path(gold_path)
+    chf_path = Path(chf_path)
+    output_path = Path(output_path)
 
     # Tahap 1-3: pemilihan kolom, konversi tipe data, pembersihan dasar.
     gold_raw = load_raw_dataset(gold_path, "gold_price")
