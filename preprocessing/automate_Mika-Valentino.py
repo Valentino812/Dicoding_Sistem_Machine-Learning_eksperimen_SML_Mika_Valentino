@@ -162,8 +162,8 @@ def preprocess_data(gold_path=GOLD_PATH, chf_path=CHF_PATH, output_path=OUTPUT_P
     merged["return_gold"] = merged["gold_price"].pct_change(fill_method=None)
     merged["return_chf"] = merged["chf_price"].pct_change(fill_method=None)
 
-    # Tahap 7: pembuatan fitur lag 1-3.
-    for lag in (1, 2, 3):
+    # Tahap 7: pembuatan fitur lag 1-10.
+    for lag in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10):
         merged[f"return_gold_lag_{lag}"] = merged["return_gold"].shift(lag)
         merged[f"return_chf_lag_{lag}"] = merged["return_chf"].shift(lag)
 
